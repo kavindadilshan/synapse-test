@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "326605627793",
+    "project_id": "synapse-dev-13951",
+    "storage_bucket": "synapse-dev-13951.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326605627793:android:39df80a848e157bc213a30",
+        "android_client_info": {
+          "package_name": "com.synapse_blt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326605627793-dv9f2v8nil2i77eh9ggi6no25mg3sgak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.synapse_blt",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "326605627793-cj4r1js9rbr8a1dstta98h1iih9oe0s7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd_ZZHuZxG8TB_7EHrLKhRe-dKKbUGtoU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326605627793-cj4r1js9rbr8a1dstta98h1iih9oe0s7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
