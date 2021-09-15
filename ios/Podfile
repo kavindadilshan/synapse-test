@@ -13,8 +13,10 @@ target 'synapse_blt' do
   )
 
   pod 'react-native-ble-manager', :path => '../node_modules/react-native-ble-manager'
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+  pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
 
-  pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
+  pod 'Firebase/Core'
 
   target 'synapse_bltTests' do
     inherit! :complete
