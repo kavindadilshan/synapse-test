@@ -200,8 +200,7 @@ const App = ({navigation}) => {
     };
 
     const checkState = () => {
-        const status = BleManager.checkState();
-        console.log('BLE Check Status:::::::::::::::::::::::::::' + status);
+        BleManager.checkState();
     };
 
     useEffect(() => {
@@ -218,7 +217,7 @@ const App = ({navigation}) => {
         bleManagerEmitter.addListener('BleManagerStopScan', handleStopScan);
         bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
         bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-        bleManagerEmitter.addListener('BleManagerDidUpdateState ', checkState);
+        bleManagerEmitter.addListener('BleManagerDidUpdateState', checkState);
 
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
@@ -242,7 +241,7 @@ const App = ({navigation}) => {
             bleManagerEmitter.removeListener('BleManagerStopScan', handleStopScan);
             bleManagerEmitter.removeListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
             bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-            bleManagerEmitter.removeListener('BleManagerDidUpdateState ', checkState);
+            bleManagerEmitter.removeListener('BleManagerDidUpdateState', checkState);
         });
     }, []);
 
@@ -280,27 +279,34 @@ const App = ({navigation}) => {
         }, 500);
     };
 
-    const notificationHandler = () => {
-        let services = servicesList.services.find(obj => obj.serviceId === 'a9712440');
-        services.servicesList.map((obj, i) => {
-            setTimeout(() => {
-                BleManager.startNotification('C4:87:49:36:37:00', `a9712440-a0e8-11e6-bdf4-0800200c9a66`, `${obj.id}-a0e8-11e6-bdf4-0800200c9a66`).then((res) => {
-                    console.log(`${obj.id} -> `, res);
-                }).catch((error) => {
-                    console.log('Notification error', error);
-                });
-            }, (i + 1) * 500);
-            // let services = servicesList.services.find(obj => obj.serviceId === 'a9717266');
-            // services.servicesList.map((obj, i) => {
-            //     setTimeout(() => {
-            //         BleManager.startNotification('C4:87:49:36:37:00', `a9717260-a0e8-11e6-bdf4-0800200c9a66`, `${obj.id}-a0e8-11e6-bdf4-0800200c9a66`).then((res) => {
-            //             console.log(`${obj.id} -> `, res);
-            //         }).catch((error) => {
-            //             console.log('Notification error', error);
-            //         });
-            //     }, (i + 1) * 500);
-            // });
-        });
+    const notificationHandler = async () => {
+        // let services = servicesList.services.find(obj => obj.serviceId === 'a9712440');
+        // services.servicesList.map((obj, i) => {
+        //     setTimeout(() => {
+        //         BleManager.startNotification('C4:87:49:36:37:00', `a9712440-a0e8-11e6-bdf4-0800200c9a66`, `${obj.id}-a0e8-11e6-bdf4-0800200c9a66`).then((res) => {
+        //             console.log(`${obj.id} -> `, res);
+        //         }).catch((error) => {
+        //             console.log('Notification error', error);
+        //         });
+        //     }, (i + 1) * 500);
+        //     // let services = servicesList.services.find(obj => obj.serviceId === 'a9717266');
+        //     // services.servicesList.map((obj, i) => {
+        //     //     setTimeout(() => {
+        //     //         BleManager.startNotification('C4:87:49:36:37:00', `a9717260-a0e8-11e6-bdf4-0800200c9a66`, `${obj.id}-a0e8-11e6-bdf4-0800200c9a66`).then((res) => {
+        //     //             console.log(`${obj.id} -> `, res);
+        //     //         }).catch((error) => {
+        //     //             console.log('Notification error', error);
+        //     //         });
+        //     //     }, (i + 1) * 500);
+        //     // });
+        // });
+        // let services = servicesList.services.find(obj => obj.serviceId === 'a9712440');
+        // console.log(services)
+
+        await BleManager.retrieveServices("DDA5E070-8A92-75EE-259F-3D48CF5321E4");
+        await BleManager.startNotification('DDA5E070-8A92-75EE-259F-3D48CF5321E4', `a9712440-a0e8-11e6-bdf4-0800200c9a66`, `a9712442-a0e8-11e6-bdf4-0800200c9a66`);
+        // To enable BleManagerDidUpdateValueForCharacteristic listener
+        // await BleManager.startNotification('C4:87:49:36:37:00', `a9712440-a0e8-11e6-bdf4-0800200c9a66`, `a9712442-a0e8-11e6-bdf4-0800200c9a66`);
     };
 
     const writeData = () => {
