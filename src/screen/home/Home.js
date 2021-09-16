@@ -53,7 +53,6 @@ class Home extends Component {
         if (!this.state.isConnect) {
             BleManager.scan([], 1, true).then((results) => {
                 console.log('Scanning...');
-                this.setState({isConnect: true});
             }).catch(err => {
                 console.error(err);
             });
@@ -70,7 +69,7 @@ class Home extends Component {
 
     handleStopScan = async () => {
         console.log('Scan is stopped');
-        this.setState({isConnect: false});
+        // this.setState({isConnect: false});
 
         const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
         if (peripheralId) {
@@ -135,7 +134,7 @@ class Home extends Component {
                         if (pDevice) {
                             pDevice.connected = true;
                         }
-                        this.setState({list: this.state.list});
+                        this.setState({list: this.state.list,isConnect: true});
                         await AsyncStorage.setItem(StorageStrings.PERIPHERAL_ID, peripheralId);
                         // this.notificationHandler(peripheral);
                     }).catch((error) => {
@@ -188,7 +187,7 @@ class Home extends Component {
                             color: 'white',
                             padding: 10,
                             textAlign: 'center'
-                        }}>{`${item.connected ? 'Disconnect' : 'Connect'}`}</Text>
+                        }}>{`${item.connected ? 'Disconnect' : this.state.isConnect?'Connect':'Connecting ...'}`}</Text>
                     </TouchableHighlight>
                 </View>
             </ScrollView>
@@ -203,19 +202,22 @@ class Home extends Component {
                     renderItem={({item}) => this.renderItem(item)}
                     keyExtractor={item => item.id}
                 />
-                <TouchableHighlight style={{
-                    backgroundColor: 'red',
-                    fontSize: 8,
-                    textAlign: 'center',
-                    color: 'white',
-                    padding: 2,
-                }} onPress={() => this.props.navigation.navigate('Dashboard')}>
-                    <Text style={{
+                {this.state.isConnect&&(
+                    <TouchableHighlight style={{
+                        backgroundColor: 'red',
+                        fontSize: 8,
+                        textAlign: 'center',
                         color: 'white',
-                        padding: 10,
-                        textAlign: 'center'
-                    }}>Main Screen</Text>
-                </TouchableHighlight>
+                        padding: 2,
+                    }} onPress={() => this.props.navigation.navigate('Dashboard')}>
+                        <Text style={{
+                            color: 'white',
+                            padding: 10,
+                            textAlign: 'center'
+                        }}>Dashboard</Text>
+                    </TouchableHighlight>
+                )}
+
             </View>
         );
     }
