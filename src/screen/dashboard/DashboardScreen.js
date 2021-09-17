@@ -21,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {BATTERY_FULL_VOLTAGE, StorageStrings} from "../../util/constance";
 import {ScrollView} from "react-native-gesture-handler";
 import * as servicesList from "../../util/uuidServices";
+import {connect} from "react-redux";
 
 
 const BleManagerModule = NativeModules.BleManager;
@@ -68,7 +69,7 @@ type Item = {
 
 let offSet = 0;
 
-const Dashboard = ({navigation}) => {
+const Dashboard = ({navigation,loading}) => {
     const isMountedRef = useRef(null);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([0]);
@@ -99,13 +100,13 @@ const Dashboard = ({navigation}) => {
             console.log(':::::::::::::::::::::::::::::::::::::::::::::::::mount')
         }
 
-        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-        const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value')
-        await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
-        bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
-
-        const BatteryThreshold = commonFunc.findDeviceServices('Configuration Profile', 'Battery Value')
-        await readProperty(peripheralId, BatteryThreshold);
+        // const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+        // const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value')
+        // await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+        // bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+        //
+        // const BatteryThreshold = commonFunc.findDeviceServices('Configuration Profile', 'Battery Value')
+        // await readProperty(peripheralId, BatteryThreshold);
 
         // return async function cleanup() {
         //     isMountedRef.current = false
@@ -117,12 +118,12 @@ const Dashboard = ({navigation}) => {
         // }
 
         return (async () => {
-            isMountedRef.current = false
-            bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
-
-            const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-            const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
-            await bleMethodFunc.stopNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+            // isMountedRef.current = false
+            // bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+            //
+            // const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+            // const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
+            // await bleMethodFunc.stopNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
         })
 
     }, []);
@@ -246,4 +247,10 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Dashboard;
+const mapStateToProps = (state) => ({
+    loading: state.user.loading,
+});
+
+const mapDispatchToProps = dispatch => {return {}};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

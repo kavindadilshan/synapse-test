@@ -1,0 +1,1 @@
+export {updateLoading} from './user';

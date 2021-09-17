@@ -15,6 +15,8 @@ import * as commonFunc from "../../util/commonFunc";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StorageStrings} from '../../util/constance';
+import {connect} from 'react-redux';
+import * as actionTypes from '../../store/actions';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -279,4 +281,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Home;
+const mapStateToProps = (state) => ({
+    loading: state.user.loading,
+});
+
+const mapDispatchToProps = dispatch => {return {}};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
