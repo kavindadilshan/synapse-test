@@ -100,13 +100,13 @@ const Dashboard = ({navigation,loading}) => {
             console.log(':::::::::::::::::::::::::::::::::::::::::::::::::mount')
         }
 
-        // const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-        // const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value')
-        // await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
-        // bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
-        //
-        // const BatteryThreshold = commonFunc.findDeviceServices('Configuration Profile', 'Battery Value')
-        // await readProperty(peripheralId, BatteryThreshold);
+        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+        const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value')
+        await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+        bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+
+        const BatteryThreshold = commonFunc.findDeviceServices('Configuration Profile', 'Battery Value')
+        await readProperty(peripheralId, BatteryThreshold);
 
         // return async function cleanup() {
         //     isMountedRef.current = false
@@ -118,12 +118,12 @@ const Dashboard = ({navigation,loading}) => {
         // }
 
         return (async () => {
-            // isMountedRef.current = false
-            // bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
-            //
-            // const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-            // const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
-            // await bleMethodFunc.stopNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+            isMountedRef.current = false
+            bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+
+            const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+            const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
+            await bleMethodFunc.stopNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
         })
 
     }, []);
