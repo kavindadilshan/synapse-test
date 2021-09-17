@@ -7,7 +7,7 @@ import {
     NativeEventEmitter,
     Animated,
     Image,
-    Text, SafeAreaView,FlatList
+    Text, SafeAreaView, FlatList, StyleSheet
 } from 'react-native';
 import DraggableFlatList, {
     RenderItemParams,
@@ -16,10 +16,11 @@ import BleManager from 'react-native-ble-manager';
 import * as commonFunc from '../../util/commonFunc';
 import Chart from '../../component/Chart';
 import * as unitServiceList from '../../util/unitServiceFunction';
-import * as servicesList from '../../util/uuidServices';
+import * as bleMethodFunc from '../../util/bleMethodFunc';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {StorageStrings} from "../../util/constance";
+import {BATTERY_FULL_VOLTAGE, StorageStrings} from "../../util/constance";
 import {ScrollView} from "react-native-gesture-handler";
+import * as servicesList from "../../util/uuidServices";
 
 
 const BleManagerModule = NativeModules.BleManager;
@@ -67,14 +68,15 @@ type Item = {
 
 let offSet = 0;
 
-const Dashboard = () => {
-
+const Dashboard = ({navigation}) => {
+    const isMountedRef = useRef(null);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([0]);
     const [change, setChange] = useState(false);
     const [value, setValue] = useState(0);
     const [activationDistance, setActivationDistance] = useState(50);
-    const [editMode,setEditMode]=useState(true);
+    const [editMode, setEditMode] = useState(true);
+    const [batteryCapacity, setBatteryCapacity] = useState(0);
 
 
     const scrollOffsetY = useRef(new Animated.Value(0)).current;
@@ -86,21 +88,43 @@ const Dashboard = () => {
     });
 
     useEffect(async () => {
-        // await getWidgetOrder();
         const dat = await dataOrder().then((res) => {
             return res
         });
         setData(dat)
-        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-        await BleManager.startNotification(peripheralId, `a9712440-a0e8-11e6-bdf4-0800200c9a66`, `a9712442-a0e8-11e6-bdf4-0800200c9a66`);
 
-        bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+        isMountedRef.current = true;
 
-        return function cleanup() {
-            bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+        if (isMountedRef.current) {
+            console.log(':::::::::::::::::::::::::::::::::::::::::::::::::mount')
         }
 
-        // await notificationHandler();
+        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+        const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value')
+        await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+        bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+
+        const BatteryThreshold = commonFunc.findDeviceServices('Configuration Profile', 'Battery Value')
+        await readProperty(peripheralId, BatteryThreshold);
+
+        // return async function cleanup() {
+        //     isMountedRef.current = false
+        //     bleMethodFunc.bleManagerEmitters.removeListener('BleManagerDidUpdateValueForCharacteristic');
+        //
+        //     const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+        //     const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
+        //     await bleMethodFunc.startNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+        // }
+
+        return (async () => {
+            isMountedRef.current = false
+            bleManagerEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', ({value}) => notify(value));
+
+            const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+            const UUID = commonFunc.findDeviceServices('Data Profile', 'Data Value');
+            await bleMethodFunc.stopNotification(peripheralId, UUID.service.serviceId, UUID.characteristic.id);
+        })
+
     }, []);
 
     const notify = (value) => {
@@ -115,33 +139,21 @@ const Dashboard = () => {
         setChange(false);
     };
 
-    const notificationHandler = async () => {
-        setInterval(() => {
-            BleManager.read(
-                'C4:87:49:36:37:00',
-                `a9712440-a0e8-11e6-bdf4-0800200c9a66`,
-                `a9712442-a0e8-11e6-bdf4-0800200c9a66`,
-            ).then(res => {
-                let dataValue = Number(commonFunc.stringAsFloat32(res));
-
-                // console.log('newtons:::::::::::::::::::::::::::::::::::::::::::::::::::'+commonFunc.stringAsFloat32(res));
-
-                let convertedVal = commonFunc.unitConversion(dataUnit.ratio, calibrationUnit.ratio, dataValue);
-
-                // console.log('pounds force::::::::::::::::::::::::::::::::::::::::::'+convertedVal)
-
-                let list = data2;
-                setChange(true);
-                let index = convertedVal;
-                list.push(index / 1000);
-                setData2(list.slice(Math.max(list.length - 20, 0)));
-                setValue(index);
-                setChange(false);
+    const readProperty = async (peripheralId, UUID) => {
+        let batteryCapacity;
+        await bleMethodFunc.readProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id)
+            .then((res) => {
+                switch (UUID.characteristic.format) {
+                    case "Float":
+                        batteryCapacity = commonFunc.stringAsFloat32(res).toFixed(2);
+                        break;
+                    default:
+                        break;
+                }
+                setBatteryCapacity(batteryCapacity)
             })
-                .catch(err => console.log(err));
-        }, 1000);
+    }
 
-    };
 
     const renderItem = useCallback(
         ({item, index, drag, isActive}: RenderItemParams<Item>) => {
@@ -153,6 +165,7 @@ const Dashboard = () => {
                         marginVertical: 10,
                     }}
                     onLongPress={drag}
+                    onPress={() => navigation.navigate('Sample')}
                 >
                     {componentType(item.widget)}
                 </TouchableOpacity>
@@ -174,18 +187,16 @@ const Dashboard = () => {
                 );
             case 'data value':
                 return (
-                    <View style={{width: '95%', backgroundColor: '#C7C7C9C7', paddingVertical: 30}}>
-                        <Text style={{
-                            color: 'black',
-                            fontSize: 55,
-                            textAlign: 'center',
-                        }}>{`${value} ${dataUnit.symbol}`}</Text>
+                    <View style={styles.flatListContainer}>
+                        <Text style={styles.mainTitle}>{`${value} ${dataUnit.symbol}`}</Text>
                     </View>
                 );
             case 'sample':
                 return (
-                    <View style={{width: '95%', backgroundColor: '#C7C7C9C7', paddingVertical: 30}}>
-                        <Text style={{color: 'black', fontSize: 55, textAlign: 'center'}}>Sample Widget</Text>
+                    <View style={styles.flatListContainer}>
+                        <Text
+                            style={styles.mainTitle}>{`${((batteryCapacity / BATTERY_FULL_VOLTAGE) * 100).toFixed(0)} %`}</Text>
+                        <Text>{`battery voltage : ${batteryCapacity}V`}</Text>
                     </View>
                 );
         }
@@ -193,146 +204,46 @@ const Dashboard = () => {
 
     return (
         <SafeAreaView style={{flex: 1}} nestedScrollEnabled={true}>
+            <View style={{flex: 1, alignItems: 'center'}}>
+                {editMode ? (
+                    <DraggableFlatList
+                        data={data}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                        onDragEnd={({data}) => {
+                            setData(data);
+                            setWidgetOrder(data);
+                        }}
+                        autoscrollThreshold={16}
+                        containerStyle={{width: '95%'}}
+                        // onScrollOffsetChange={(offsetY) => console.log(offsetY)}
+                        activationDistance={10}
+                        dragItemOverflow={true}
+                    />
+                ) : (
+                    <FlatList
+                        data={data}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                    />
+                )}
 
-            {/*<Animated.View*/}
-            {/*    style={{*/}
-            {/*        position: "absolute",*/}
-            {/*        left: 0,*/}
-            {/*        right: 0,*/}
-            {/*        top: 0,*/}
-            {/*        height: headerScrollHeight,*/}
-            {/*        width: "100%",*/}
-            {/*        overflow: "hidden",*/}
-            {/*        zIndex: 999,*/}
-            {/*        // STYLE*/}
-            {/*        borderBottomColor: "#EFEFF4",*/}
-            {/*        borderBottomWidth: 2,*/}
-            {/*        padding: 10,*/}
-            {/*        backgroundColor: "blue",*/}
-            {/*        alignItems:'center',justifyContent:'center'*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <Text style={{flex:1,textAlign:'center'}} adjustsFontSizeToFit={true}>Hi ! All</Text>*/}
-            {/*</Animated.View>*/}
-
-            {/*<ScrollView*/}
-            {/*    onScroll={Animated.event([*/}
-            {/*        {nativeEvent: {contentOffset: {y: scrollOffsetY}}}*/}
-            {/*    ],{useNativeDriver: false})}*/}
-            {/*    scrollEventThrottle={16}*/}
-            {/*    scrollEnabled={true}*/}
-            {/*>*/}
-                <View style={{ flex: 1, alignItems: 'center'}}>
-
-                    {editMode?(
-                        <DraggableFlatList
-                            data={data}
-                            renderItem={renderItem}
-                            keyExtractor={(item, index) => `draggable-item-${item.key}`}
-                            onDragEnd={({data}) => {
-                                setData(data);
-                                setWidgetOrder(data);
-                            }}
-                            autoscrollThreshold={16}
-                            containerStyle={{width: '95%'}}
-                            // onScrollOffsetChange={(offsetY) => console.log(offsetY)}
-                            activationDistance={10}
-                            dragItemOverflow={true}
-                        />
-                    ):(
-                        <FlatList
-                            data={data}
-                            renderItem={renderItem}
-                            keyExtractor={(item, index) => `draggable-item-${item.key}`}
-                        />
-                    )}
-
-                </View>
-            {/*</ScrollView>*/}
+            </View>
         </SafeAreaView>
     );
 };
 
+const styles = StyleSheet.create({
+    mainTitle: {
+        color: 'black',
+        fontSize: 55
+    },
+    flatListContainer: {
+        width: '95%',
+        backgroundColor: '#C7C7C9C7',
+        paddingVertical: 30,
+        alignItems: 'center'
+    }
+})
+
 export default Dashboard;
-
-
-// import React, { useRef } from "react";
-// import { View, Animated, Image, ScrollView, Text } from "react-native";
-//
-// const H_MAX_HEIGHT = 150;
-// const H_MIN_HEIGHT = 52;
-// const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
-//
-// const CollapsibleHeader = () => {
-//     const scrollOffsetY = useRef(new Animated.Value(0)).current;
-//     const headerScrollHeight = scrollOffsetY.interpolate({
-//         inputRange: [0, H_SCROLL_DISTANCE],
-//         outputRange: [H_MAX_HEIGHT, H_MIN_HEIGHT],
-//         extrapolate: "clamp"
-//     });
-//
-//     return (
-//         <View style={{ flex: 1 }}>
-//             <ScrollView
-//                 onScroll={Animated.event([
-//                     { nativeEvent: { contentOffset: { y: scrollOffsetY } } }
-//                 ])}
-//                 scrollEventThrottle={16}
-//             >
-//                 <View style={{ paddingTop: H_MAX_HEIGHT,flex:1 }}>
-//                     {/** Page contant goes here **/}
-//
-//                     <View style={{ padding: 20 }}>
-//                         <Text>React Native Collapsible Header</Text>
-//                     </View>
-//
-//                     <View style={{ padding: 20, height: 200, backgroundColor: "red" }}>
-//                         <Text>View 1</Text>
-//                     </View>
-//
-//                     <View style={{ padding: 20, height: 200, backgroundColor: "yellow" }}>
-//                         <Text>View 1</Text>
-//                     </View>
-//
-//                     <View style={{ padding: 20, height: 200, backgroundColor: "green" }}>
-//                         <Text>View 1</Text>
-//                     </View>
-//                 </View>
-//             </ScrollView>
-//
-//             {
-//                 /**
-//                  * We put the header at the bottom of
-//                  * our JSX or it will not take priority
-//                  * on Android (for some reason, simply
-//                  * setting zIndex does not work)
-//                  **/
-//             }
-//             <Animated.View
-//                 style={{
-//                     position: "absolute",
-//                     left: 0,
-//                     right: 0,
-//                     top: 0,
-//                     height: headerScrollHeight,
-//                     width: "100%",
-//                     overflow: "hidden",
-//                     zIndex: 999,
-//                     // STYLE
-//                     borderBottomColor: "#EFEFF4",
-//                     borderBottomWidth: 2,
-//                     padding: 10,
-//                     backgroundColor: "blue"
-//                 }}
-//             >
-//                 <Image
-//                     source={{ uri: "https://via.placeholder.com/300" }}
-//                     style={{ flex: 1 }}
-//                     resizeMode={"contain"}
-//                 />
-//             </Animated.View>
-//         </View>
-//     )
-// }
-//
-// export default CollapsibleHeader;

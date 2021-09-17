@@ -78,3 +78,10 @@ export const DecodeHexStringToByteArray = function (hex) {
 export const unitConversion = (dataUnitRatio, calibrationUnitRation, dataValue) => {
     return Math.trunc((dataUnitRatio / calibrationUnitRation) * dataValue);
 };
+
+export const findDeviceServices = (serviceName, characteristicName) => {
+    let selectObj = servicesList.services.find(obj => obj.serviceName === serviceName);
+    let characteristicObj = selectObj.servicesList.find(obj => obj.name === characteristicName);
+
+    return {service: selectObj, characteristic: characteristicObj}
+}
