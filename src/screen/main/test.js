@@ -1,5 +1,5 @@
 /**
- * Sample BLE React Native App
+ * Configurations BLE React Native App
  *
  * @format
  * @flow strict-local

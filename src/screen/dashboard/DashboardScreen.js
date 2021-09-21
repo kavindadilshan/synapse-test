@@ -83,6 +83,7 @@ const Dashboard = ({navigation, loading}) => {
     const [activationDistance, setActivationDistance] = useState(50);
     const [editMode, setEditMode] = useState(true);
     const [batteryCapacity, setBatteryCapacity] = useState(0);
+    const [dataArray,setDataArray]=useState();
 
 
     const scrollOffsetY = useRef(new Animated.Value(0)).current;
@@ -134,6 +135,7 @@ const Dashboard = ({navigation, loading}) => {
     }, []);
 
     const notify = (value) => {
+        setDataArray(value);
         let dataValue = Number(commonFunc.stringAsFloat32(value));
         let convertedVal = commonFunc.unitConversion(dataUnit.ratio, calibrationUnit.ratio, dataValue);
         let list = data2;
@@ -162,17 +164,16 @@ const Dashboard = ({navigation, loading}) => {
 
     const writeProperty = async () => {
         const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-        const UUID = commonFunc.findDeviceServices('Configuration Profile', 'Data Rate')
-        const data = commonFunc.decimalToBytesArray(1000);
-        console.log(data)
-        // await bleMethodFunc.writeProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id,[3, 232])
-        //     .then((res) => {
-        //         console.log('saved')
-        //     })
-        //     .catch(err => console.log(err))
-        //
-        // await bleMethodFunc.readProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id)
-        //     .then((res) => {console.log(commonFunc.stringAsUInt32BE(res))})
+        const UUID = commonFunc.findDeviceServices('Configuration Profile', 'System Zero')
+
+        await bleMethodFunc.writeProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id,dataArray)
+            .then((res) => {
+                console.log('saved')
+            })
+            .catch(err => console.log(err))
+
+        await bleMethodFunc.readProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id)
+            .then((res) => {console.log('string val::::::'+commonFunc.stringAsUInt32BE(res))})
     }
 
 

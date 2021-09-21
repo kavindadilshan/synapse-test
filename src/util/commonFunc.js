@@ -1,6 +1,8 @@
 import * as servicesList from './uuidServices';
 import {toBytes, toHex} from 'hex-my-bytes';
-import { stringToBytes } from "convert-string";
+import {stringToBytes} from "convert-string";
+import {Alert} from "react-native";
+import {deviceConfigurations} from "./constance";
 
 export const binConvertString = (binArr) => {
     return String.fromCharCode.apply(null, new Uint32Array(binArr));
@@ -54,6 +56,11 @@ export const stringAsFloat32 = (binArr) => {
     return new DataView(buffer).getFloat32(0, false);
 };
 
+export const byuteAsFloat32 = (val) => {
+
+    return new DataView(val).getFloat32(0, false);
+};
+
 export const retreiveOptimizeData = (format, result) => {
     if (format === servicesList.UINT_32) {
         return stringAsUInt32BE(result);
@@ -76,17 +83,17 @@ export const hexDecimalToByteArray = function (hex) {
     return toBytes(hex);
 };
 
-export const ByteArrayToHexDecimal =function (value){
+export const ByteArrayToHexDecimal = function (value) {
     return toHex(value)
 }
 
-export const decimalToBytesArray=function (long){
+export const decimalToBytesArray = function (long) {
     var byteArray = [0, 0, 0, 0];
 
-    for ( var index = 0; index < byteArray.length; index ++ ) {
+    for (var index = 0; index < byteArray.length; index++) {
         var byte = long & 0xff;
-        byteArray [ index ] = byte;
-        long = (long - byte) / 256 ;
+        byteArray [index] = byte;
+        long = (long - byte) / 256;
     }
 
     return byteArray;

@@ -6,6 +6,14 @@ let commonUUIDRef = `-a0e8-11e6-bdf4-0800200c9a66`
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
+export const enableBluetooth=async ()=>{
+    return await BleManager.enableBluetooth();
+}
+
+export const configBLE = () => {
+    return BleManager.start({forceLegacy: true,showAlert:true});
+}
+
 export const startNotification = async (peripheralId, serviceUUID, characteristicUUID) => {
     return await BleManager.startNotification(peripheralId, serviceUUID + commonUUIDRef, characteristicUUID + commonUUIDRef);
 }
@@ -44,10 +52,6 @@ export const writeProperty = async (peripheralId, serviceUUID, characteristicUUI
 
 export const checkState = () => {
     return BleManager.checkState();
-}
-
-export const configBLE = () => {
-    return BleManager.start({forceLegacy: true});
 }
 
 export const readProperty = async (peripheralId, serviceUUID, characteristicUUID) => {
