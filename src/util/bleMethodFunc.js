@@ -38,8 +38,8 @@ export const retrieveServices = async (peripheralId) => {
     return await BleManager.retrieveServices(peripheralId)
 }
 
-export const writeProperty = async (peripheralId, serviceUUID, characteristicUUID) => {
-    return await BleManager.write(peripheralId, serviceUUID+ commonUUIDRef, characteristicUUID+ commonUUIDRef, [0])
+export const writeProperty = async (peripheralId, serviceUUID, characteristicUUID,data) => {
+    return await BleManager.write(peripheralId, serviceUUID+ commonUUIDRef, characteristicUUID+ commonUUIDRef, data)
 }
 
 export const checkState = () => {

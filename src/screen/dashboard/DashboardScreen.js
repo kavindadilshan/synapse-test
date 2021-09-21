@@ -55,7 +55,12 @@ async function dataOrder() {
             {
                 key: `item-3`,
                 label: '3',
-                widget: 'sample',
+                widget: 'battery',
+            },
+            {
+                key: `item-4`,
+                label: '4',
+                widget: 'data rate',
             },
         ];
     }
@@ -69,7 +74,7 @@ type Item = {
 
 let offSet = 0;
 
-const Dashboard = ({navigation,loading}) => {
+const Dashboard = ({navigation, loading}) => {
     const isMountedRef = useRef(null);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([0]);
@@ -155,6 +160,21 @@ const Dashboard = ({navigation,loading}) => {
             })
     }
 
+    const writeProperty = async () => {
+        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
+        const UUID = commonFunc.findDeviceServices('Configuration Profile', 'Data Rate')
+        const data = commonFunc.decimalToBytesArray(1000);
+        console.log(data)
+        // await bleMethodFunc.writeProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id,[3, 232])
+        //     .then((res) => {
+        //         console.log('saved')
+        //     })
+        //     .catch(err => console.log(err))
+        //
+        // await bleMethodFunc.readProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id)
+        //     .then((res) => {console.log(commonFunc.stringAsUInt32BE(res))})
+    }
+
 
     const renderItem = useCallback(
         ({item, index, drag, isActive}: RenderItemParams<Item>) => {
@@ -166,7 +186,7 @@ const Dashboard = ({navigation,loading}) => {
                         marginVertical: 10,
                     }}
                     onLongPress={drag}
-                    onPress={() => navigation.navigate('Sample')}
+                    onPress={() => writeProperty()}
                 >
                     {componentType(item.widget)}
                 </TouchableOpacity>
@@ -192,7 +212,7 @@ const Dashboard = ({navigation,loading}) => {
                         <Text style={styles.mainTitle}>{`${value} ${dataUnit.symbol}`}</Text>
                     </View>
                 );
-            case 'sample':
+            case 'battery':
                 return (
                     <View style={styles.flatListContainer}>
                         <Text
@@ -200,6 +220,12 @@ const Dashboard = ({navigation,loading}) => {
                         <Text>{`battery voltage : ${batteryCapacity}V`}</Text>
                     </View>
                 );
+            case 'data rate':
+                return (
+                    <View style={styles.flatListContainer}>
+                        <Text style={styles.mainTitle}>data rate</Text>
+                    </View>
+                )
         }
     };
 
@@ -251,6 +277,8 @@ const mapStateToProps = (state) => ({
     loading: state.user.loading,
 });
 
-const mapDispatchToProps = dispatch => {return {}};
+const mapDispatchToProps = dispatch => {
+    return {}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

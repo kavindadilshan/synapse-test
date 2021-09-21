@@ -1,5 +1,6 @@
 import * as servicesList from './uuidServices';
-import {toBytes} from 'hex-my-bytes';
+import {toBytes, toHex} from 'hex-my-bytes';
+import { stringToBytes } from "convert-string";
 
 export const binConvertString = (binArr) => {
     return String.fromCharCode.apply(null, new Uint32Array(binArr));
@@ -71,9 +72,25 @@ export const retreiveOptimizeData = (format, result) => {
     }
 };
 
-export const DecodeHexStringToByteArray = function (hex) {
+export const hexDecimalToByteArray = function (hex) {
     return toBytes(hex);
 };
+
+export const ByteArrayToHexDecimal =function (value){
+    return toHex(value)
+}
+
+export const decimalToBytesArray=function (long){
+    var byteArray = [0, 0, 0, 0];
+
+    for ( var index = 0; index < byteArray.length; index ++ ) {
+        var byte = long & 0xff;
+        byteArray [ index ] = byte;
+        long = (long - byte) / 256 ;
+    }
+
+    return byteArray;
+}
 
 export const unitConversion = (dataUnitRatio, calibrationUnitRation, dataValue) => {
     return Math.trunc((dataUnitRatio / calibrationUnitRation) * dataValue);
