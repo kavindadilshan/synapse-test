@@ -12,6 +12,6 @@ export const AlertMessages = {
 }
 
 export const deviceConfigurations = {
-    BLE_IOS_SETTING: Linking.openURL('App-Prefs:Bluetooth'),
-    BLE_ANDROID_SETTING: Linking.openSettings()
+    // BLE_IOS_SETTING: Linking.openURL('App-Prefs:Bluetooth'),
+    // BLE_ANDROID_SETTING: Linking.openSettings()
 }

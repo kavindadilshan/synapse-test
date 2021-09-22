@@ -34,12 +34,14 @@ export const Home = ({navigation}) => {
             Platform.OS !== 'ios' && checkBluetoothEnabled()
         }
         bleMethodFunc.configBLE().then(() => console.log('module initialized'))
-        startScan();
         bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
         bleManagerEmitter.addListener('BleManagerStopScan', handleStopScan);
         bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
         bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
         bleManagerEmitter.addListener('BleManagerDidUpdateState', checkState);
+        setTimeout(()=>{
+            startScan();
+        },2000)
 
         return (async () => {
             bleManagerEmitter.removeListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
@@ -62,7 +64,7 @@ export const Home = ({navigation}) => {
                             text: 'Cancel', onPress: () => checkBluetoothEnabled(), style: 'cancel'
                         },
                         {
-                            text: 'Settings', onPress: () => deviceConfigurations.BLE_ANDROID_SETTING
+                            text: 'Settings', onPress: () => Linking.openSettings()
                         },
                     ])
             });
@@ -116,7 +118,7 @@ export const Home = ({navigation}) => {
 
     const checkState = () => {
         BleManager.checkState();
-        console.log('status::::::::::::::::::::::')
+        // console.log('status::::::::::::::::::::::')
     };
 
     const activeHandler = async (peripheral) => {
@@ -239,13 +241,13 @@ export const Home = ({navigation}) => {
             />
             {isConnect && (
                 <View>
-                    {/*<TouchableHighlight style={{...styles.button2,backgroundColor:'blue'}} onPress={() =>navigation.navigate('Dashboard')}>*/}
-                    {/*    <Text style={{*/}
-                    {/*        color: 'white',*/}
-                    {/*        padding: 10,*/}
-                    {/*        textAlign: 'center'*/}
-                    {/*    }}>Configure</Text>*/}
-                    {/*</TouchableHighlight>*/}
+                    <TouchableHighlight style={{...styles.button2,backgroundColor:'blue'}} onPress={() =>navigation.navigate('Configurations')}>
+                        <Text style={{
+                            color: 'white',
+                            padding: 10,
+                            textAlign: 'center'
+                        }}>Configure</Text>
+                    </TouchableHighlight>
                     <TouchableHighlight style={styles.button2} onPress={() => navigation.navigate('Dashboard')}>
                         <Text style={{
                             color: 'white',
@@ -334,4 +336,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
-

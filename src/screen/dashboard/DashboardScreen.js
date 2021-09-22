@@ -22,6 +22,7 @@ import {BATTERY_FULL_VOLTAGE, StorageStrings} from "../../util/constance";
 import {ScrollView} from "react-native-gesture-handler";
 import * as servicesList from "../../util/uuidServices";
 import {connect} from "react-redux";
+import {ProgressBar} from 'react-native-multicolor-progress-bar';
 
 
 const BleManagerModule = NativeModules.BleManager;
@@ -35,6 +36,9 @@ const NUM_ITEMS = 10;
 let dataUnit = unitServiceList.unitService.find(obj => obj.unit === 'pounds force');
 let calibrationUnit = unitServiceList.unitService.find(obj => obj.unit === 'newtons');
 
+const MWL = 80
+const TARGET = 30
+const CURRENT_VAL = 40
 
 async function dataOrder() {
     const widgetOrder = await AsyncStorage.getItem(StorageStrings.WIDGET_ORDER)
@@ -83,7 +87,7 @@ const Dashboard = ({navigation, loading}) => {
     const [activationDistance, setActivationDistance] = useState(50);
     const [editMode, setEditMode] = useState(true);
     const [batteryCapacity, setBatteryCapacity] = useState(0);
-    const [dataArray,setDataArray]=useState();
+    const [dataArray, setDataArray] = useState();
 
 
     const scrollOffsetY = useRef(new Animated.Value(0)).current;
@@ -162,21 +166,6 @@ const Dashboard = ({navigation, loading}) => {
             })
     }
 
-    const writeProperty = async () => {
-        const peripheralId = await AsyncStorage.getItem(StorageStrings.PERIPHERAL_ID);
-        const UUID = commonFunc.findDeviceServices('Configuration Profile', 'System Zero')
-
-        await bleMethodFunc.writeProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id,dataArray)
-            .then((res) => {
-                console.log('saved')
-            })
-            .catch(err => console.log(err))
-
-        await bleMethodFunc.readProperty(peripheralId, UUID.service.serviceId, UUID.characteristic.id)
-            .then((res) => {console.log('string val::::::'+commonFunc.stringAsUInt32BE(res))})
-    }
-
-
     const renderItem = useCallback(
         ({item, index, drag, isActive}: RenderItemParams<Item>) => {
             return (
@@ -187,7 +176,6 @@ const Dashboard = ({navigation, loading}) => {
                         marginVertical: 10,
                     }}
                     onLongPress={drag}
-                    onPress={() => writeProperty()}
                 >
                     {componentType(item.widget)}
                 </TouchableOpacity>
@@ -224,7 +212,41 @@ const Dashboard = ({navigation, loading}) => {
             case 'data rate':
                 return (
                     <View style={styles.flatListContainer}>
-                        <Text style={styles.mainTitle}>data rate</Text>
+                        <View style={{width: '90%'}}>
+                            <ProgressBar
+                                arrayOfProgressObjects={[
+                                    {
+                                        color: 'green',
+                                        value: 0.25,
+                                    },
+                                    {
+                                        color: '#EBD76A',
+                                        value: 0.45,
+                                    },
+                                    {
+                                        color: '#DA291C',
+                                        value: 0.3,
+                                        // opacity: 0.5
+                                    },
+                                ]}
+                                parentViewStyle={{alignItems: 'stretch'}}
+                                backgroundBarStyle={{
+                                    alignItems: 'stretch',
+                                    backgroundColor: '#EFF1F5',
+                                    borderRadius: 8.5,
+                                    height: 25
+                                }}
+                            />
+                            <View style={{zIndex: 999999, position: 'absolute', left: '30%', top: -5}}>
+                                <View style={{width: 4, height: 40, borderRadius: 5, backgroundColor: 'black'}}/>
+                                <Text style={{left: -5}}>30</Text>
+                            </View>
+                            <View style={{zIndex: 999999, position: 'absolute', left: '75%', top: -5}}>
+                                <View style={{width: 4, height: 40, borderRadius: 5, backgroundColor: 'black'}}/>
+                                <Text style={{textAlign: 'center', left: -12}}>MWL</Text>
+                            </View>
+                        </View>
+
                     </View>
                 )
         }
@@ -270,7 +292,7 @@ const styles = StyleSheet.create({
         width: '95%',
         backgroundColor: '#C7C7C9C7',
         paddingVertical: 30,
-        alignItems: 'center'
+        alignItems: 'center',
     }
 })
 
