@@ -140,6 +140,7 @@ PODS:
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.7.0)
   - libevent (2.1.12)
+  - MultiplatformBleAdapter (0.1.9)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -344,6 +345,9 @@ PODS:
     - React
   - react-native-ble-manager (7.5.0):
     - React-Core
+  - react-native-ble-plx (2.0.3):
+    - MultiplatformBleAdapter (= 0.1.9)
+    - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
   - react-native-uuid-generator (6.1.1):
@@ -412,6 +416,8 @@ PODS:
     - React-cxxreact (= 0.64.2)
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
+  - rn-fetch-blob (0.12.0):
+    - React-Core
   - RNCAsyncStorage (1.15.8):
     - React-Core
   - RNFBApp (12.7.5):
@@ -501,6 +507,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-ble-advertiser (from `../node_modules/react-native-ble-advertiser/ios`)
   - react-native-ble-manager (from `../node_modules/react-native-ble-manager`)
+  - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-uuid-generator (from `../node_modules/react-native-uuid-generator`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -515,6 +522,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -546,6 +554,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - libevent
+    - MultiplatformBleAdapter
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -586,6 +595,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-ble-advertiser/ios"
   react-native-ble-manager:
     :path: "../node_modules/react-native-ble-manager"
+  react-native-ble-plx:
+    :path: "../node_modules/react-native-ble-plx"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-uuid-generator:
@@ -614,6 +625,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNFBApp:
@@ -656,6 +669,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8de2a97a17e15b6b98e38e8770e2d129a57c0040
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  MultiplatformBleAdapter: 5a6a897b006764392f9cef785e4360f54fb9477d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
@@ -672,6 +686,7 @@ SPEC CHECKSUMS:
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-ble-advertiser: 3f773e62dd85c6811c4ce90c98fad0b8e2093621
   react-native-ble-manager: c51fe60663155712b17f35895eceffcd1343a818
+  react-native-ble-plx: f10240444452dfb2d2a13a0e4f58d7783e92d76e
   react-native-safe-area-context: 5cf05f49df9d17261e40e518481f2e334c6cd4b5
   react-native-uuid-generator: 997d9848f07081ce7200a05b76e3f8c7b309963c
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
@@ -686,6 +701,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 24600e3b1aaa77126989bc58b6747509a1ba14f3
   React-runtimeexecutor: a9904c6d0218fb9f8b19d6dd88607225927668f9
   ReactCommon: 149906e01aa51142707a10665185db879898e966
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: 0f655864a81214d1c5a9bf0faf79d86dc25c383e
   RNFBApp: 46a6918f6b1bbb0b332fafb07ef1362bd96ca857
   RNFBAuth: a63fc58edf68af3e36eea2f02cadc733226b4c61
