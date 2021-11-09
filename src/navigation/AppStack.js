@@ -5,11 +5,13 @@ import MainScreen from '../screen/main/test';
 import Dashboard from '../screen/dashboard/DashboardScreen';
 import Home from "../screen/home/Home";
 import Configurations from "../screen/main/Configurations";
+import Adviser from "../screen/home/Adviser";
 
 const Stack = createStackNavigator();
 
 const AppStack = ({navigation}) => (
     <Stack.Navigator>
+        <Stack.Screen name={'Adviser'} component={Adviser}/>
         <Stack.Screen name={'Home'} component={Home}/>
         <Stack.Screen name={'Configurations'} component={Configurations}/>
         <Stack.Screen name={'MainScreen'} component={MainScreen}/>

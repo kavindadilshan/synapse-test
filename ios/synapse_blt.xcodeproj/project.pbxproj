@@ -11,7 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2AD4CE1826F1B5CB009E8B75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2AD4CE1726F1B5CB009E8B75 /* GoogleService-Info.plist */; };
+		2A86A76E273A2BCB00AD5C80 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2A86A76D273A2BCB00AD5C80 /* GoogleService-Info.plist */; };
 		2AD4CE5F26F1C744009E8B75 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AD4CE5E26F1C744009E8B75 /* CoreBluetooth.framework */; };
 		2AD4CEE526F1CAA9009E8B75 /* libAWDProtobufBluetooth.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AD4CEE426F1CA92009E8B75 /* libAWDProtobufBluetooth.tbd */; };
 		7367C1030046BE25C936BF05 /* libPods-synapse_blt-synapse_bltTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCEB1554350CFCEB0C7B651E /* libPods-synapse_blt-synapse_bltTests.a */; };
@@ -39,6 +39,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = synapse_blt/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = synapse_blt/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = synapse_blt/main.m; sourceTree = "<group>"; };
+		2A86A76D273A2BCB00AD5C80 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2AD4CE1726F1B5CB009E8B75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2AD4CE5E26F1C744009E8B75 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		2AD4CEE426F1CA92009E8B75 /* libAWDProtobufBluetooth.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAWDProtobufBluetooth.tbd; path = usr/lib/libAWDProtobufBluetooth.tbd; sourceTree = SDKROOT; };
@@ -151,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				2AD4CE1726F1B5CB009E8B75 /* GoogleService-Info.plist */,
+				2A86A76D273A2BCB00AD5C80 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* synapse_blt */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* synapse_bltTests */,
@@ -268,9 +270,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A86A76E273A2BCB00AD5C80 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				2AD4CE1826F1B5CB009E8B75 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

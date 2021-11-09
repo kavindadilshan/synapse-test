@@ -20,6 +20,7 @@
     "hex-my-bytes": "^1.0.0",
     "react": "17.0.1",
     "react-native": "0.64.2",
+    "react-native-ble-advertiser": "0.0.16",
     "react-native-ble-manager": "^7.5.0",
     "react-native-chart-kit": "^6.11.0",
     "react-native-draggable-flatlist": "^2.6.2",
@@ -41,8 +42,10 @@
     "@react-native-community/eslint-config": "2.0.0",
     "babel-jest": "26.6.3",
     "eslint": "7.14.0",
+    "immutability-helper": "^3.1.1",
     "jest": "26.6.3",
     "metro-react-native-babel-preset": "0.64.0",
+    "react-native-uuid-generator": "^6.1.1",
     "react-test-renderer": "17.0.1"
   },
   "jest": {
